@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 
 const Home = () => {
     const [data, setData] = useState([])
@@ -8,6 +8,7 @@ const Home = () => {
     const [username, setUsername] = useState("")
     const [email, setEmail] = useState("")
     const [city, setCity] = useState("")
+    const navigate = useNavigate();
     
     useEffect(() => {
       fetch("https://jsonplaceholder.typicode.com/users")
@@ -43,7 +44,6 @@ const Home = () => {
         form.style.display = "block"
         const user=data.find((user)=>user.id ===item);
         setEditText(user)
-        
     }
   
     const deleteHandler =(id) => {
@@ -63,6 +63,10 @@ const Home = () => {
     const closeHandler = () =>{
       document.querySelector(".form").style.display = "none"
     }
+
+    const handleShowUser= (id)=>{
+      navigate(`/user/${id}`)
+    }
   
     
     return (
@@ -81,13 +85,13 @@ const Home = () => {
           </thead>
           <tbody className='bg-zinc-100'>
             {data.map((item)=>(
-               <tr key={item.id} className='border hover:bg-zinc-200'>
+               <tr key={item.id} onClick={()=>handleShowUser(item.id)} className='border hover:bg-zinc-200'>
                 <td className='border border-grey-300 py-[7px]'>{item.id}</td>
-                <NavLink  to={`/user/${item.id}`} ><td className='py-[7px] '>{item.name}</td></NavLink>
+                <td className='py-[7px] '>{item.name}</td>
                 <td className='border border-grey-300 py-[7px]'>{item.username}</td>
                 <td className='border border-grey-300 py-[7px]'>{item.email}</td>
                 <td className='border border-grey-300 py-[7px]'>{item.address.city}</td>
-                <td className='border border-grey-300 py-[7px]'><button onClick={()=>editHandler(item.id)} className=' py-1 px-4 rounded border hover:bg-blue-100'>Edit</button> <button onClick={()=>deleteHandler(item.id)} className=' py-1 px-4 rounded border hover:bg-blue-100'>Delete</button></td>
+                <td onClick={(e)=>e.stopPropagation()} className='border border-grey-300 py-[7px]'><button onClick={()=>editHandler(item.id)} className=' py-1 px-4 rounded border hover:bg-blue-100'>Edit</button> <button onClick={()=>deleteHandler(item.id)} className=' py-1 px-4 rounded border hover:bg-blue-100'>Delete</button></td>
               </tr>
             ))}
           </tbody>
